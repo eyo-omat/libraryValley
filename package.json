@@ -17,6 +17,9 @@
   },
   "homepage": "https://github.com/eyo-omat/libraryvalley#readme",
   "dependencies": {
-    "express": "^4.14.0"
+    "dotenv": "^4.0.0",
+    "ejs": "^2.5.5",
+    "express": "^4.14.0",
+    "firebase": "^3.6.5"
   }
 }

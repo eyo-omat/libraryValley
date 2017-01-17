@@ -4,9 +4,9 @@ var app = express();
 
 var routes = require('./routes');
 
-app.set('view engine'. 'ejs');
+app.set('view engine', 'ejs');
 
-var path require('path');
+var path = require('path');
 
 app.use(express.static(path.join(__dirname, 'public')));
 
