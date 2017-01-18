@@ -13,18 +13,17 @@
 		<h1 id="hero-title"><%= title %></h1>
 	</div>
 
-
 	<div id="posters-wrapper" class="content-padding clearfix">
 
-	  <% for (var i = 0; i < books.length; i++) { %>
+	  <% for (var key in books) { %>
 	  	<div class="poster">
 
-	  		<a href="/star_wars_episode/<%= books[i].episode_number %>">
-
-			  	<img src="/images/<%= books[i].poster %>" class="img-responsive">
+	  		<a href="/booksummary/<%= books[key].bookName %>">
+<%= console.log(books[key].image) %>
+			  	<img src="<%= books[key].image %>" class="img-responsive">
 
 			  	<div class="poster-info-overlay">
-			  		<h3><%= books[i].title %></h3>
+			  		<h3><%= books[key].bookName %></h3>
 			  		<h4>View More <i class="fa fa-arrow-right"></i></h4>
 			  	</div>
 
