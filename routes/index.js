@@ -50,34 +50,83 @@ var books = firebase.database().ref('books');
 	console.log("Finished")
 	});
 
-	/*$('.addValue').on("click", function( event ) {  
-    event.preventDefault();
-    //if( auth != null ){
-      if( $('#bookTitle').val() != '' || $('#author').val() != '' ){
+};
+
+exports.createbook = function(req, res) {
+	var books = firebase.database().ref('books');
+	if( req.body.bookName != '' || req.body.bookAuthor != '' ){
         books
           .push({
-            bookName: $('#bookTitle').val(),
-            author: $('#author').val(),
-            year: $('#year').val(),
-            category: $('#category').val()
+            bookName: req.body.bookName,
+            author: req.body.bookAuthor,
+            year: req.body.year,
+            category: req.body.category
+            //image: req.body.linkbox
           })
-          document.addBookForm.reset();
-      } else {
-        alert('Please fill atlease name or email!');
-      }
-    //} else {
-      //inform user to login
-    //}
-  });*/
-console.log(req);
-
+		books.on("value", function(snapshot) {
+			var bookList  = snapshot.val();
+		res.render('home', {
+			title: "Library Valley",
+			books : bookList,
+		});
+		console.log("Finished")
+		});
+	} else {
+	  alert('Please fill atlease name or email!');
+	}
 };
 
 exports.signup = function(req, res) {
-	var users = firebase.database().ref('Users');
+	console.log(req.body);
 	res.render('signup', {
 		title: "Sign Up",
+		error: "",
 	});
+	console.log("Finished")
+
+};
+
+exports.register = function(req, res) {
+	var users = firebase.database().ref('Users');
+	//var email = req.body.email;
+	//var password = req.body.conPassword;
+	//console.log(req.body);
+	/*res.render('signup', {
+		title: "Sign Up",
+	});*/
+	/*firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+		   console.log(error.code);
+		   console.log(error.message);
+	});*/
+
+	if( req.body.email != '' || req.body.conPassword != '' ){
+		firebase.auth().createUserWithEmailAndPassword( req.body.email, req.body.conPassword).catch(function(error) {
+			   console.log(error.code);
+			   console.log(error.message);
+			   if (error.message != '' || error.code ) { 
+					res.render('signup', {
+						title: "Sign Up",
+						error: error.message
+					}); 
+				} else {
+		        users.push({
+		            fullName: req.body.name,
+		            email: req.body.email,
+		            password: req.body.conPassword,
+		            userRole: "user"
+		          }) 
+				res.render('home', {
+					title: "Library Valley",
+				});
+				}
+		});
+	} else {
+				res.render('signup', {
+					title: "Library Valley",
+					error: "Email and password are compulsory",
+				});
+	}
+
 	console.log("Finished")
 
 };
