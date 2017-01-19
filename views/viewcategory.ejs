@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  <% include partials/head.ejs %>
+
+</head>
+<body>
+
+	<% include partials/header.ejs %>
+
+	<div id="hero-image">
+		<h1 id="hero-title"><%= title %></h1>
+	</div>
+
+	<div id="posters-wrapper" class="content-padding clearfix">
+
+	  <% for (var key in books) { %>
+	  	<div class="poster">
+
+	  		<a href="/booksummary/<%= key %>">
+
+			  	<img src="<%= books[key].image %>" class="img-responsive">
+
+			  	<div class="poster-info-overlay">
+			  		<h3><%= books[key].bookName %></h3>
+			  		<h4>View More <i class="fa fa-arrow-right"></i></h4>
+			  	</div>
+
+		  	</a>
+
+			</div>	  
+	  <% } %>
+
+	</div>
+
+
+	<% include partials/footer.ejs %>
+
+  <% include partials/scripts.ejs %>
+
+</body>
+</html>
