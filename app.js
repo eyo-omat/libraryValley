@@ -22,8 +22,9 @@ app.post('/borrowbook/:borrowedValue/:bookname', routes.borrowbook);
 app.post('/deletebook/:bookname', routes.deletebook);
 app.get('/managebook/:bookname', routes.managebook);
 app.post('/updatebook/:bookname', routes.updatebook);
-app.post('/viewcategories', routes.viewcategories);
-app.post('/viewcategory/:categoryName', routes.viewcategory);
+app.get('/viewcategories', routes.viewcategories);
+app.get('/viewcategory/:categoryName', routes.viewcategory);
+app.post('/createCategory', routes.createCategory);
 
 app.post('/borrowedbooks', routes.updatebook);
 app.post('/createCategory', routes.updatebook);

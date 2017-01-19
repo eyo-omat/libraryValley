@@ -35,31 +35,52 @@ exports.home = function(req, res) {
 };
 // Categories Route
 exports.viewcategories = function(req, res) {
-	var ref = firebase.database().ref("categories");
+	var ref = firebase.database().ref();
 
 	ref.on("value", function(snapshot) {
-		var categoryList  = snapshot.val();
+		var refs  = snapshot.val();
 	res.render('viewcategories', {
 		title: "Categories",
-		categories : categoryList
+		categories : refs.categories,
+		books : refs.books
 	});
 	console.log("Finished")
 	});
 };
 // Category Route
 exports.viewcategory = function(req, res) {
-	var ref = firebase.database().ref("categories").child(req.params.categoryName);
+	var ref = firebase.database().ref();
 
 	ref.on("value", function(snapshot) {
-		var category  = snapshot.val();
+		var allTables  = snapshot.val();
 		var categoryKey  = req.params.categoryName;
-	res.render('viewcategories', {
+		var category  = allTables.categories[req.params.categoryName];
+		var books  = allTables.books;
+		var booksz  = [];
+		for (key in books){ if (books[key].category === req.params.categoryName) { booksz.push(books[key]); } }
+	res.render('viewcategory', {
 		title: category.categoryName,
 		category : category,
-		categoryKey : categoryKey
+		categoryKey : categoryKey,
+		books : booksz
 	});
 	console.log("Finished")
 	});
+};
+//Admin add book action route
+exports.createCategory = function(req, res) {
+	var categories = firebase.database().ref('categories');
+	console.log(req.body);
+	if( req.body.categoryName != ''){
+		categories
+          .push({
+            categoryName: req.body.categoryName,
+            categoryDescription: req.body.categoryDescription
+          });
+		res.redirect('/viewcategories');
+	} else {
+	  alert('Please fill the name of the category');
+	}
 };
 // admin add book page route
 exports.addbooks = function(req, res) {
