@@ -2,9 +2,9 @@ var express = require('express');
 
 var app = express();
 
+require('dotenv').config();
 var routes = require('./routes');
 var bodyParser = require('body-parser');
-// app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); 
 app.set('view engine', 'ejs');
 
@@ -22,10 +22,13 @@ app.post('/borrowbook/:borrowedValue/:bookname', routes.borrowbook);
 app.post('/deletebook/:bookname', routes.deletebook);
 app.get('/managebook/:bookname', routes.managebook);
 app.post('/updatebook/:bookname', routes.updatebook);
+app.post('/viewcategories', routes.viewcategories);
+app.post('/viewcategory/:categoryName', routes.viewcategory);
 
-app.listen(4400, function(){
-	console.log("The application runs on localhost:4400");
-})
+app.post('/borrowedbooks', routes.updatebook);
+app.post('/createCategory', routes.updatebook);
+app.get('*', routes.notFound);
+app.listen(process.env.PORT || 4400);
 
 
 

@@ -3,11 +3,11 @@
   // Initialize Firebase
 var firebase = require('firebase');
   var config = {
-    apiKey: "AIzaSyAZvRrQcRSdeA_5VUCLJsP8W3UkfyEHFYw",
-    authDomain: "libraryvalley-358ff.firebaseapp.com",
-    databaseURL: "https://libraryvalley-358ff.firebaseio.com",
-    storageBucket: "libraryvalley-358ff.appspot.com",
-    messagingSenderId: "237777156570"
+    apiKey: process.env.apiKey,
+    authDomain: process.env.authDomain,
+    databaseURL: process.env.databaseURL,
+    storageBucket: process.env.storageBucket,
+    messagingSenderId: process.env.messagingSenderId
   };
   firebase.initializeApp(config);
 
@@ -32,20 +32,47 @@ exports.home = function(req, res) {
 	});
 	console.log("Finished")
 	});
+};
+// Categories Route
+exports.viewcategories = function(req, res) {
+	var ref = firebase.database().ref("categories");
 
-	
+	ref.on("value", function(snapshot) {
+		var categoryList  = snapshot.val();
+	res.render('viewcategories', {
+		title: "Categories",
+		categories : categoryList
+	});
+	console.log("Finished")
+	});
+};
+// Category Route
+exports.viewcategory = function(req, res) {
+	var ref = firebase.database().ref("categories").child(req.params.categoryName);
 
+	ref.on("value", function(snapshot) {
+		var category  = snapshot.val();
+		var categoryKey  = req.params.categoryName;
+	res.render('viewcategories', {
+		title: category.categoryName,
+		category : category,
+		categoryKey : categoryKey
+	});
+	console.log("Finished")
+	});
 };
 // admin add book page route
 exports.addbooks = function(req, res) {
-var books = firebase.database().ref('books');
+var tables = firebase.database().ref();
 
-	books.on("value", function(snapshot) {
-		var bookList  = snapshot.val();
+	tables.on("value", function(snapshot) {
+		var tableList  = snapshot.val();
 	res.render('addbooks', {
 		title: "Add a Book",
-		books : bookList,
+		books : tableList.books,
+		categories : tableList.categories
 	});
+	console.log()
 	console.log("Finished")
 	});
 
@@ -53,25 +80,27 @@ var books = firebase.database().ref('books');
 //Admin add book action route
 exports.createbook = function(req, res) {
 	var books = firebase.database().ref('books');
+	console.log(req.body);
+	var image = "https://firebasestorage.googleapis.com/v0/b/libraryvalley-358ff.appspot.com/o/bookcovers%2F2016-01-27-PHOTO-00008304.jpg?alt=media&token=16c74a5a-cff4-42f2-8d02-b1cc985db42e";
 	if( req.body.bookName != '' || req.body.bookAuthor != '' ){
+		if( req.body.linkbox != ''){
+	        image = req.body.linkbox;
+	    }
         books
           .push({
             bookName: req.body.bookName,
             author: req.body.bookAuthor,
             year: req.body.year,
-            category: req.body.category
-            //image: req.body.linkbox
-          })
-		books.on("value", function(snapshot) {
-			var bookList  = snapshot.val();
-		res.redirect('home', {
-			title: "Library Valley",
-			books : bookList,
-		});
-		console.log("Finished")
-		});
+            category: req.body.category,
+            image: image
+          });
+		res.redirect('/');
+		// books.on("value", function(snapshot) {
+		// 	var bookList  = snapshot.val();
+		// console.log("Finished")
+		// });
 	} else {
-	  alert('Please fill atlease name or email!');
+	  alert('Please fill atlease name and author!');
 	}
 };
 //user sign up page route

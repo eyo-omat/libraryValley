@@ -18,8 +18,8 @@
 	  <% for (var key in books) { %>
 	  	<div class="poster">
 
-	  		<a href="/booksummary/<%= books[key].bookName %>">
-<%= console.log(books[key].image) %>
+	  		<a href="/booksummary/<%= key %>">
+
 			  	<img src="<%= books[key].image %>" class="img-responsive">
 
 			  	<div class="poster-info-overlay">
