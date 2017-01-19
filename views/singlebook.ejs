@@ -35,8 +35,12 @@
   			</ul>
   		</div>
         <div class="">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Borrow</button>
-          <button type="submit" class="btn btn-primary">Return</button>
+          <a type="button" class="btn btn-default" href="/borrowbook/0/<%= bookKey %>">Borrow</a>
+          <a type="button" class="btn btn-primary" href="/borrowbook/1/<%= bookKey %>">Return</a>
+        </div>
+        <div class="">
+          <a type="button" class="btn btn-default" href="/managebook/<%= bookKey %>">Manage</a>
+          <a type="button" class="btn btn-primary" href="/borrowbook/0/<%= bookKey %>">Available</a>
         </div>
   	</div>
 

@@ -18,7 +18,11 @@ app.post('/createbook', routes.createbook);
 app.get('/signup', routes.signup);
 app.post('/register', routes.register);
 app.get('/booksummary/:bookname?', routes.singlebook);
-//addbook?bookName=erewa&bookAuthor=Jason+Bourne&year=2009&category=ACTION&file=joker.jpg
+app.post('/borrowbook/:borrowedValue/:bookname', routes.borrowbook);
+app.post('/deletebook/:bookname', routes.deletebook);
+app.get('/managebook/:bookname', routes.managebook);
+app.post('/updatebook/:bookname', routes.updatebook);
+
 app.listen(4400, function(){
 	console.log("The application runs on localhost:4400");
 })

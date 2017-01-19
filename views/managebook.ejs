@@ -58,33 +58,37 @@ console.log("inside get download url")
 
 	<div id="posters-wrapper" class="content-padding clearfix">
 
-	 <form method="post" name="addBookForm" action="/createbook" enctype="x-www-form-urlencoded">
-          <h4 class="modal-title" id="">Add Book</h4>
+	 <form method="post" name="updateBookForm" action="/updatebook/<%= bookKey %>" enctype="x-www-form-urlencoded">
+          <h4 class="modal-title" id="">Edit Book</h4>
         <div class="">
             <div class="form-group">
               <label for="bookTitle">Title</label>
-              <input type="text" class="form-control" id="bookName" name="bookName" required placeholder="Enter book title">
+              <input type="text" class="form-control" id="bookName" name="bookName" required value="<%= book.bookName %>">
             </div>
             <div class="form-group">
               <label for="author">Author</label>
-              <input type="text" class="form-control" id="bookAuthor" name="bookAuthor" required placeholder="Enter book author">
+              <input type="text" class="form-control" id="bookAuthor" name="bookAuthor" required value="<%= book.author %>">
             </div>
             <div class="form-group">
               <label for="description">Description</label>
-              <input type="text" class="form-control" id="description" name="description" required placeholder="Enter a description">
+              <input type="text" class="form-control" id="description" name="description" required value="<%= book.description %>">
             </div>
             <div class="form-group">
               <label for="year">Year of Publication</label>
-              <input type="text" class="form-control" id="year" name="year" placeholder="Enter year of publication">
+              <input type="text" class="form-control" id="year" name="year" value="<%= book.year %>">
             </div>
             <div class="form-group">
               <label for="category">Category</label>
-              <input type="text" class="form-control" id="category" name="category" placeholder="Enter Category">
+              <input type="text" class="form-control" id="category" name="category" value="<%= book.category %>">
             </div>
-	          <div class="form-group">
+			<div class="poster-wrapper">
+	  			<img src="<%= book.image %>" class="img-responsive">
+	  		</div>
+	          <div class="mdl-card__supporting-text mdl-color-text--grey-600" id="messagesDiv">
 	            <input type="file" id="file" name="file"/>
 	            <input type="text" id="linkbox" name="linkbox">
-	         </div>
+	          </div>
+	        </div>
         </div>
         <div class="">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
