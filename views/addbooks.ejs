@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  <% include partials/head.ejs %>
+<script>
+console.log("inside get download url")
+    var auth = firebase.auth();
+    var storageRef = firebase.storage().ref();
+    function handleFileSelect(evt) {
+      evt.stopPropagation();
+      evt.preventDefault();
+      var file = evt.target.files[0];
+      var metadata = {
+        'contentType': file.type
+      };
+      // Push to child path.
+      // [START oncomplete]
+      storageRef.child('bookcovers/' + file.name).put(file, metadata).then(function(snapshot) {
+        console.log('Uploaded', snapshot.totalBytes, 'bytes.');
+        console.log(snapshot.metadata);
+        var url = snapshot.metadata.downloadURLs[0];
+        console.log('File available at', url);
+        // [START_EXCLUDE]
+        document.getElementById('linkbox').innerHTML = '<a href="' +  url + '">Click For File</a>';
+        document.getElementById('linkbox').value = url;
+		// [END_EXCLUDE]
+      }).catch(function(error) {
+        // [START onfailure]
+        console.error('Upload failed:', error);
+        // [END onfailure]
+      });
+      // [END oncomplete]
+    }
+    window.onload = function() {
+      document.getElementById('file').addEventListener('change', handleFileSelect, true);
+      document.getElementById('file').disabled = false;
+      auth.onAuthStateChanged(function(user) {
+        //if (user) {
+          console.log('Anonymous user signed-in.', user);
+          document.getElementById('file').disabled = false;
+        //} else {
+          console.log('There was no anonymous session. Creating a new anonymous user.');
+          // Sign the user in anonymously since accessing Storage requires the user to be authorized.
+        //  auth.signInAnonymously();
+       // }
+      });
+    }
+  </script>
+</head>
+<body>
+
+	<% include partials/header.ejs %>
+
+	<div id="hero-image">
+		<h1 id="hero-title"><%= title %></h1>
+	</div>
+
+	<div id="posters-wrapper" class="content-padding clearfix">
+
+	 <form method="post" name="addBookForm" action="/createbook" enctype="x-www-form-urlencoded">
+          <h4 class="modal-title" id="">Add Book</h4>
+        <div class="">
+            <div class="form-group">
+              <label for="bookTitle">Title</label>
+              <input type="text" class="form-control" id="bookName" name="bookName" required placeholder="Enter book title">
+            </div>
+            <div class="form-group">
+              <label for="author">Author</label>
+              <input type="text" class="form-control" id="bookAuthor" name="bookAuthor" required placeholder="Enter book author">
+            </div>
+            <div class="form-group">
+              <label for="description">Description</label>
+              <input type="text" class="form-control" id="description" name="description" required placeholder="Enter a description">
+            </div>
+            <div class="form-group">
+              <label for="year">Year of Publication</label>
+              <input type="text" class="form-control" id="year" name="year" placeholder="Enter year of publication">
+            </div>
+            <div class="form-group">
+              <label for="category">Category</label>
+              <input type="text" class="form-control" id="category" name="category" placeholder="Enter Category">
+            </div>
+	          <div class="form-group">
+	            <input type="file" id="file" name="file"/>
+	            <input type="text" id="linkbox" name="linkbox">
+	         </div>
+        </div>
+        <div class="">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+        </form>
+	</div>
+
+
+	<% include partials/footer.ejs %>
+
+  <% include partials/scripts.ejs %>
+
+</body>
+</html>

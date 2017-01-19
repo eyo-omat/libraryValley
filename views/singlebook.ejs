@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  <% include partials/head.ejs %>
+
+</head>
+<body>
+
+	<% include partials/header.ejs %>
+
+	<div id="hero-image-single" style="background-image: url('<%= book.image %>');">
+		<h1 id="hero-title"><%= title %></h1>
+	</div>
+
+
+	<div class="content-padding clearfix">
+
+		<div class="poster-wrapper">
+  		<img src="<%= book.image %>" class="img-responsive">
+  	</div>
+
+  	<div class="description-wrapper">
+  		
+  		<div class="description">
+  			<h2 class="movie-header">Description</h2>
+  			<p><%= book.author %></p>
+  		</div>
+
+  		<div class="main-characters">
+  			<h2 class="movie-header">Main Characters</h2>
+  			<ul>
+          <li><%= book.author %></li>
+  				<li><%= book.year %></li>
+  			</ul>
+  		</div>
+        <div class="">
+          <a type="button" class="btn btn-default" href="/borrowbook/0/<%= bookKey %>">Borrow</a>
+          <a type="button" class="btn btn-primary" href="/borrowbook/1/<%= bookKey %>">Return</a>
+        </div>
+        <div class="">
+          <a type="button" class="btn btn-default" href="/managebook/<%= bookKey %>">Manage</a>
+          <a type="button" class="btn btn-primary" href="/borrowbook/0/<%= bookKey %>">Available</a>
+        </div>
+  	</div>
+
+	</div>
+
+
+
+  <% include partials/footer.ejs %>
+
+  <% include partials/scripts.ejs %>
+
+</body>
+</html>
