@@ -16,6 +16,14 @@
 	<div id="posters-wrapper" class="content-padding clearfix">
 
 	 <table>
+    <tr>
+      <td>Book Name</td>
+      <td>Date Borrowed</td>
+      <td>Return Date</td>
+      <td>Reference Code</td>
+      <td>Status</td>
+      <td></td>
+    </tr>
    <% for (key in borrowedbooks){ %>
     <tr>
       <td><%= books[borrowedbooks[key].bookID].bookName %></td>
@@ -23,7 +31,7 @@
       <td><%= borrowedbooks[key].returnDate %></td>
       <td><%= borrowedbooks[key].referenceCode %></td>
       <td><%= borrowedbooks[key].status %></td>
-      <td><a type="button" class="btn btn-primary" href="/returnbook/1/<%= borrowedbooks[key].bookID %>">Return</a></td>
+      <td><a type="button" class="btn btn-primary" href="/returnbook/1/<%= key %>/<%= borrowedbooks[key].bookID %>">Return</a></td>
     </tr>
     <% } %>
   </table>

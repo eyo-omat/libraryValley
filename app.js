@@ -25,9 +25,8 @@ app.post('/updatebook/:bookname', routes.updatebook);
 app.get('/viewcategories', routes.viewcategories);
 app.get('/viewcategory/:categoryName', routes.viewcategory);
 app.post('/createCategory', routes.createCategory);
-
-app.post('/borrowedbooks', routes.updatebook);
-app.post('/createCategory', routes.updatebook);
+app.get('/borrowedbooks', routes.borrowedbooks);
+app.post('/returnbook/:borrowedValue/:borrowbookkey/:bookname', routes.updatebook);
 app.get('*', routes.notFound);
 app.listen(process.env.PORT || 4400);
 
