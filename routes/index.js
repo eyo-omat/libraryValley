@@ -392,7 +392,7 @@ if (user.email === "admin@liibraryvalley.heroku.com") { res.redirect('/'); }
 	            userID: "kojo",
 	            status: "pending"
 	          });
-	req.flash('user', 'Your Reference Code is::'+referenceCode);
+	//req.flash('user', 'Your Reference Code is::'+referenceCode);
 	return res.redirect('/user');
 	console.log("Finished")
 
