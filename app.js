@@ -19,6 +19,7 @@ app.post('/createbook', routes.createbook);
 app.get('/signup', routes.signup);
 app.get('/login', routes.login);
 app.post('/logins', routes.logins);
+app.post('/logout', routes.logins);
 app.post('/register', routes.register);
 app.get('/booksummary/:bookname?', routes.singlebook);
 app.get('/ubooksummary/:bookname?/:user', routes.usersinglebook);

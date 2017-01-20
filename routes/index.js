@@ -156,6 +156,22 @@ exports.login = function(req, res) {
 
 };
 //user login page page route
+exports.logout = function(req, res) {
+	console.log(req.body);
+firebase.auth().signOut().then(function() {
+   console.log("Logged out!")
+	return res.render('login', {
+		title: "Log in",
+		error: "",
+	});
+}, function(error) {
+   console.log(error.code);
+   console.log(error.message);
+});
+	console.log("Finished")
+
+};
+//user login page page route
 exports.logins = function(req, res) {
 	console.log(req.body);
 if( req.body.email != '' || req.body.conPassword != '' ){
@@ -256,7 +272,7 @@ exports.borrowbook = function(req, res) {
 	var book = firebase.database().ref('books').child(req.params.bookname);
 	var books = firebase.database().ref('books');
 	var borrow = firebase.database().ref('borrowed');
-	book.update({"borrowed": req.params.borrowedValue});
+	book.update({"quantity": book.quantity - 1 });
 	var bookKey = req.params.bookname;
 	var referenceCode = Math.random().toString(36).substr(2, 8); //randomString(8);
 	var now = new Date();
@@ -367,7 +383,7 @@ exports.borrowedbooks = function(req, res) {
 // return a book route
 exports.returnbook = function(req, res) {
 	var tables = firebase.database().ref();
-	
+	var borrowed = firebase.database().ref('borrowed');
 	tables.on("value", function(snapshot) {
 		var allTables  = snapshot.val();
 		var borrowedbook = allTables.borrowed[req.params.borrowedbookkey];
@@ -383,6 +399,7 @@ exports.returnbook = function(req, res) {
 				user : user
 			}); 
 		} else { 
+			borrowed.update({status : "Returned"});
 			return res.render('borrowedbooks', {
 				title: "Borrowed Books",
 				books : allTables.books,
