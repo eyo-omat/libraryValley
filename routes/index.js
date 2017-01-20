@@ -290,6 +290,48 @@ exports.deletebook = function(req, res) {
 	});
 
 };
+// List all borrowed books route
+exports.borrowedbooks = function(req, res) {
+	var tables = firebase.database().ref();
+	tables.on("value", function(snapshot) {
+		var allTables  = snapshot.val();
+	return res.render('borrowedbooks', {
+		title: "Borrowed Books",
+		books : allTables.books,
+		borrowedbooks : allTables.borrowed
+	});
+	 console.log("Finished")
+	 });
+
+};
+// return a book route
+exports.returnbook = function(req, res) {
+	var tables = firebase.database().ref();
+	
+	tables.on("value", function(snapshot) {
+		var allTables  = snapshot.val();
+		var borrowedbook = allTables.borrowed[req.params.borrowedbookkey];
+		var returnDate = borrowedbook.returnDate;
+		var date1 = new Date();
+		var date2 = new Date(returnDate);
+		var diff = date2.valueOf() - date1.valueOf();
+		if (diff < 0) { 
+			return res.render('surcharge', {
+				title: "Surcharge User",
+				books : allTables.books,
+				borrowedbooks : allTables.borrowed
+			}); 
+		} else { 
+			return res.render('borrowedbooks', {
+				title: "Borrowed Books",
+				books : allTables.books,
+				borrowedbooks : allTables.borrowed
+			});
+	 }
+	 console.log("Finished")
+	 });
+
+};
 // Route for all other page requests
 exports.notFound = function(req, res) {
 	var books = firebase.database().ref('books');
