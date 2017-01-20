@@ -18,7 +18,7 @@ app.post('/createbook', routes.createbook);
 app.get('/signup', routes.signup);
 app.post('/register', routes.register);
 app.get('/booksummary/:bookname?', routes.singlebook);
-app.post('/borrowbook/:borrowedValue/:bookname', routes.borrowbook);
+app.get('/borrowbook/:borrowedValue/:bookname', routes.borrowbook);
 app.post('/deletebook/:bookname', routes.deletebook);
 app.get('/managebook/:bookname', routes.managebook);
 app.post('/updatebook/:bookname', routes.updatebook);

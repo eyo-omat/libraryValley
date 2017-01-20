@@ -33,21 +33,12 @@
             <div class="form-group">
               <label for="year">Year of Publication</label>
               <input type="month" class="form-control" id="year" name="year" placeholder="Enter year of publication">
-            <!-- <select id="year" name="year">
-              <script>
-              var myDate = new Date();
-              var year = myDate.getFullYear();
-              for(var i = 1900; i < year+1; i++){
-                document.write('<option value="'+i+'">'+i+'</option>');
-              }
-              </script>
-            </select> -->
             </div>
             <div class="form-group">
               <label for="category">Category</label><br>
               <!-- <input type="text" id="category" name="category" value="test">  -->
-            <% console.log(categories); for (var key in categories) { %>
-              <input type="radio" id="category" name="category" value="<%= key %>"><%= categories[key].categoryName %><br>    
+            <% for (var key in categories) { %>
+              <input type="radio" id="category" name="category" value="<%= key %>"><%= categories[key].categoryName %><br>
             <% } %>
             </div>
 	          <div class="form-group">

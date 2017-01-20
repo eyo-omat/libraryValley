@@ -17,16 +17,10 @@ exports.home = function(req, res) {
 	var books = firebase.database().ref('books');
 	var users = firebase.database().ref('Users');
 	var ref = firebase.database().ref();
-	
-	ref.on("value", function(snapshot) {
-	   console.log(snapshot.val());
-	}, function (error) {
-	   console.log("Error: " + error.code);
-	});
 
 	books.on("value", function(snapshot) {
 		var bookList  = snapshot.val();
-	res.render('home', {
+	return res.render('home', {
 		title: "Library Valley",
 		books : bookList
 	});
@@ -39,7 +33,7 @@ exports.viewcategories = function(req, res) {
 
 	ref.on("value", function(snapshot) {
 		var refs  = snapshot.val();
-	res.render('viewcategories', {
+	return res.render('viewcategories', {
 		title: "Categories",
 		categories : refs.categories,
 		books : refs.books
@@ -57,8 +51,12 @@ exports.viewcategory = function(req, res) {
 		var category  = allTables.categories[req.params.categoryName];
 		var books  = allTables.books;
 		var booksz  = [];
-		for (key in books){ if (books[key].category === req.params.categoryName) { booksz.push(books[key]); } }
-	res.render('viewcategory', {
+		for (key in books){ 
+			if (books[key].category === req.params.categoryName) {
+					 booksz.push(books[key]); 
+			} 
+		}
+	return res.render('viewcategory', {
 		title: category.categoryName,
 		category : category,
 		categoryKey : categoryKey,
@@ -77,7 +75,7 @@ exports.createCategory = function(req, res) {
             categoryName: req.body.categoryName,
             categoryDescription: req.body.categoryDescription
           });
-		res.redirect('/viewcategories');
+		return res.redirect('/viewcategories');
 	} else {
 	  alert('Please fill the name of the category');
 	}
@@ -88,12 +86,11 @@ var tables = firebase.database().ref();
 
 	tables.on("value", function(snapshot) {
 		var tableList  = snapshot.val();
-	res.render('addbooks', {
-		title: "Add a Book",
-		books : tableList.books,
-		categories : tableList.categories
-	});
-	console.log()
+	// return res.render('addbooks', {
+	// 	title: "Add a Book",
+	// 	books : tableList.books,
+	// 	categories : tableList.categories
+	// });
 	console.log("Finished")
 	});
 
@@ -115,11 +112,8 @@ exports.createbook = function(req, res) {
             category: req.body.category,
             image: image
           });
-		res.redirect('/');
-		// books.on("value", function(snapshot) {
-		// 	var bookList  = snapshot.val();
-		// console.log("Finished")
-		// });
+		return res.redirect('/');
+		//return res.writeHead(302, { 'Location' : 'http://localhost:4400'} );
 	} else {
 	  alert('Please fill atlease name and author!');
 	}
@@ -127,7 +121,7 @@ exports.createbook = function(req, res) {
 //user sign up page route
 exports.signup = function(req, res) {
 	console.log(req.body);
-	res.render('signup', {
+	return res.render('signup', {
 		title: "Sign Up",
 		error: "",
 	});
@@ -160,12 +154,7 @@ exports.register = function(req, res) {
 					users.on("value", function(snapshot) {
 						var userList  = snapshot.val();
 						var user  = userList[userKey];
-						res.redirect('home', {
-							title: "Library Valley",
-							books : bookList,
-							users : userList,
-							user : user,
-						});
+						return res.redirect('/');
 						console.log("Finished")
 					});
 
@@ -173,18 +162,12 @@ exports.register = function(req, res) {
 			   console.log(error.code);
 			   console.log(error.message);
 			   if (error.message != '' || error.code ) { 
-					res.redirect('signup', {
-						title: "Sign Up",
-						error: error.message
-					}); 
+					res.redirect('/signup'); 
 				}
 				
 		});
 	} else {
-				res.redirect('signup', {
-					title: "Library Valley",
-					error: "Email and password are compulsory",
-				});
+				res.redirect('/signup');
 	}
 
 	console.log("Finished")
@@ -199,7 +182,7 @@ exports.singlebook = function(req, res) {
 		var book = bookList[req.params.bookname];
 		var bookKey = req.params.bookname;
 		console.log(book);
-	res.render('singlebook', {
+	return res.render('singlebook', {
 		title: book.bookName,
 		books : bookList,
 		book : book,
@@ -213,23 +196,33 @@ exports.singlebook = function(req, res) {
 exports.borrowbook = function(req, res) {
 	var book = firebase.database().ref('books').child(req.params.bookname);
 	var books = firebase.database().ref('books');
-	book.once("value", function(snapshot) {
-		var book1  = snapshot.val(); 
-		console.log(book1);
-		if( book1 === null ) {
-	        /* does not exist */
-	    } else {
-	        book.update({"borrowed": req.params.borrowedValue});
-	    }
-		var bookKey = req.params.bookname;
-	 console.log("Finished")
-	 });
+	var borrow = firebase.database().ref('borrowed');
+	book.update({"borrowed": req.params.borrowedValue});
+	var bookKey = req.params.bookname;
+	var referenceCode = Math.random().toString(36).substr(2, 8); //randomString(8);
+	var now = new Date();
+	var rnow = new Date();
+	rnow.setDate(now.getDate() + 10);
+	var dd = now.getDate();
+	var rdd = rnow.getDate();
+	var mm = now.getMonth()+1;
+	var rmm = rnow.getMonth()+1;
+	var yyyy = now.getFullYear();
+	var ryyyy = rnow.getFullYear();
+	
+	var now = dd+'/'+mm+'/'+yyyy;
+	var rnow = rdd+'/'+rmm+'/'+ryyyy;
+	console.log("now", now, "rnow", rnow, "referenceCode", referenceCode);
+	borrow.push({
+	            bookID: req.params.bookname,
+	            borrowedDate: now,
+	            returnDate: rnow,
+	            referenceCode: referenceCode,
+	            userID: "kojo"
+	          });
 	books.on("value", function(snapshot) {
 		var bookList  = snapshot.val();
-	res.redirect('home', {
-		title: "Library Valley",
-		books : bookList
-	});
+	return res.redirect('/');
 	console.log("Finished")
 	});
 
@@ -243,7 +236,7 @@ exports.managebook = function(req, res) {
 		console.log(book1);
 		var book1 = bookList[req.params.bookname];
 		var bookKey = req.params.bookname;
-		 res.render('managebook', {
+		return res.render('managebook', {
 		 	title: book1.bookName,
 		 	book : book1,
 		 	books : bookList,
@@ -270,12 +263,7 @@ exports.updatebook = function(req, res) {
 		console.log(book1);
 		var book1 = bookList[req.params.bookname];
 		var bookKey = req.params.bookname;
-		 res.redirect('home', {
-		 	title: "Library Valley",
-		 	book : book1,
-		 	books : bookList,
-		 	bookKey : bookKey
-		 });
+		return res.redirect('/');
 	 console.log("Finished")
 	 });
 
@@ -297,10 +285,7 @@ exports.deletebook = function(req, res) {
 	 });
 	books.on("value", function(snapshot) {
 		var bookList  = snapshot.val();
-	res.redirect('home', {
-		title: "Library Valley",
-		books : bookList
-	});
+	return res.redirect('/');
 	console.log("Finished")
 	});
 
@@ -308,7 +293,7 @@ exports.deletebook = function(req, res) {
 // Route for all other page requests
 exports.notFound = function(req, res) {
 	var books = firebase.database().ref('books');
-	res.render('notFound', {
+	return res.render('notFound', {
 		books : books,
 		title : "Oops , this page doesn't exist"
 	});
