@@ -155,6 +155,31 @@ exports.login = function(req, res) {
 	console.log("Finished")
 
 };
+//user login page page route
+exports.logins = function(req, res) {
+	console.log(req.body);
+if( req.body.email != '' || req.body.conPassword != '' ){
+firebase.auth().signInWithEmailAndPassword(req.body.email, req.body.password).then(function (){ 
+	if (req.body.email === "admin@liibraryvalley.heroku.com") { 
+		return res.redirect('/')
+	} else {
+		return res.redirect('/user')
+	}
+	}).catch(function(error) {
+   console.log(error.code);
+   console.log(error.message);
+	if (error.message != '' || error.code ) { 
+	return res.render('login', {
+		title: "Log in",
+		error: error.message,
+	});
+} });
+	} else {
+				res.redirect('/signup');
+	}
+	console.log("Finished")
+
+};
 //User sign up action route
 exports.register = function(req, res) {
 	var users = firebase.database().ref('Users');
@@ -170,20 +195,8 @@ exports.register = function(req, res) {
 			            userRole: "user"
 			          });
 				console.log("after push")
-					books.on("value", function(snapshot) {
-						var bookList  = snapshot.val();
-						res.redirect('home', {
-							title: "Library Valley",
-							books : bookList
-						});
+						return res.redirect('/login');
 						console.log("Finished")
-					});
-					users.on("value", function(snapshot) {
-						var userList  = snapshot.val();
-						var user  = userList[userKey];
-						return res.redirect('/');
-						console.log("Finished")
-					});
 
 				}).catch(function(error) {
 			   console.log(error.code);
