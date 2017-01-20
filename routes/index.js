@@ -513,7 +513,8 @@ if (user.email != "admin@liibraryvalley.heroku.com") { res.redirect('/'); }
 				console.log("borrroooo", borrowedbook);
 				var returnDate = borrowedbook.returnDate;
 				var date1 = new Date();
-				var date2 = new Date(returnDate);
+				var from = returnDate.split("/");
+				var date2 = new Date(from[2], from[1] - 1, from[0]);
 				var diff = date2.valueOf() - date1.valueOf();
 					if (diff < 0) { 
 						return res.render('surcharge', {
