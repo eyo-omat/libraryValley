@@ -57,6 +57,20 @@ exports.viewcategories = function(req, res) {
 	console.log("Finished")
 	});
 };
+// Categories Route
+exports.uviewcategories = function(req, res) {
+	var ref = firebase.database().ref();
+
+	ref.on("value", function(snapshot) {
+		var refs  = snapshot.val();
+	return res.render('uviewcategories', {
+		title: "Categories",
+		categories : refs.categories,
+		books : refs.books
+	});
+	console.log("Finished")
+	});
+};
 // Category Route
 exports.viewcategory = function(req, res) {
 	var ref = firebase.database().ref();
@@ -73,6 +87,30 @@ exports.viewcategory = function(req, res) {
 			} 
 		}
 	return res.render('viewcategory', {
+		title: category.categoryName,
+		category : category,
+		categoryKey : categoryKey,
+		books : booksz
+	});
+	console.log("Finished")
+	});
+};
+// Category Route
+exports.uviewcategory = function(req, res) {
+	var ref = firebase.database().ref();
+
+	ref.on("value", function(snapshot) {
+		var allTables  = snapshot.val();
+		var categoryKey  = req.params.categoryName;
+		var category  = allTables.categories[req.params.categoryName];
+		var books  = allTables.books;
+		var booksz  = [];
+		for (key in books){ 
+			if (books[key].category === req.params.categoryName) {
+					 booksz.push(books[key]); 
+			} 
+		}
+	return res.render('uviewcategory', {
 		title: category.categoryName,
 		category : category,
 		categoryKey : categoryKey,
@@ -129,7 +167,7 @@ exports.createbook = function(req, res) {
             image: image,
             quantity: req.body.quantity
           });
-		return res.redirect('/');
+		return res.redirect('/admin');
 		//return res.writeHead(302, { 'Location' : 'http://localhost:4400'} );
 	} else {
 	  //alert('Please fill atlease name and author!');
@@ -155,7 +193,7 @@ exports.login = function(req, res) {
 	console.log("Finished")
 
 };
-//user login page page route
+//user login action page route
 exports.logout = function(req, res) {
 	console.log(req.body);
 firebase.auth().signOut().then(function() {
@@ -177,7 +215,7 @@ exports.logins = function(req, res) {
 if( req.body.email != '' || req.body.conPassword != '' ){
 firebase.auth().signInWithEmailAndPassword(req.body.email, req.body.password).then(function (){ 
 	if (req.body.email === "admin@liibraryvalley.heroku.com") { 
-		return res.redirect('/')
+		return res.redirect('/admin')
 	} else {
 		return res.redirect('/user')
 	}
@@ -191,7 +229,7 @@ firebase.auth().signInWithEmailAndPassword(req.body.email, req.body.password).th
 	});
 } });
 	} else {
-				res.redirect('/signup');
+				res.redirect('/');
 	}
 	console.log("Finished")
 
@@ -211,7 +249,7 @@ exports.register = function(req, res) {
 			            userRole: "user"
 			          });
 				console.log("after push")
-						return res.redirect('/login');
+						return res.redirect('/');
 						console.log("Finished")
 
 				}).catch(function(error) {
@@ -296,11 +334,8 @@ exports.borrowbook = function(req, res) {
 	            userID: "kojo",
 	            status: "pending"
 	          });
-	books.on("value", function(snapshot) {
-		var bookList  = snapshot.val();
-	return res.redirect('/');
+	return res.redirect('/user');
 	console.log("Finished")
-	});
 
 };
 //manage a book route
@@ -339,7 +374,7 @@ exports.updatebook = function(req, res) {
 		console.log(book1);
 		var book1 = bookList[req.params.bookname];
 		var bookKey = req.params.bookname;
-		return res.redirect('/');
+		return res.redirect('/admin');
 	 console.log("Finished")
 	 });
 
@@ -361,7 +396,7 @@ exports.deletebook = function(req, res) {
 	 });
 	books.on("value", function(snapshot) {
 		var bookList  = snapshot.val();
-	return res.redirect('/');
+	return res.redirect('/admin');
 	console.log("Finished")
 	});
 
