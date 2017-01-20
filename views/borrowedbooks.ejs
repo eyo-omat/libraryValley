@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  <% include partials/head.ejs %>
+
+</head>
+<body>
+
+	<% include partials/header.ejs %>
+
+	<div id="hero-image">
+		<h1 id="hero-title"><%= title %></h1>
+	</div>
+
+	<div id="posters-wrapper" class="content-padding clearfix">
+
+	 <table>
+   <% for (key in borrowedbooks){ %>
+    <tr>
+      <td><%= books[borrowedbooks[key].bookID].bookName %></td>
+      <td><%= borrowedbooks[key].borrowedDate %></td>
+      <td><%= borrowedbooks[key].returnDate %></td>
+      <td><%= borrowedbooks[key].referenceCode %></td>
+      <td><%= borrowedbooks[key].status %></td>
+      <td><a type="button" class="btn btn-primary" href="/returnbook/1/<%= borrowedbooks[key].bookID %>">Return</a></td>
+    </tr>
+    <% } %>
+  </table>
+	</div>
+
+
+	<% include partials/footer.ejs %>
+
+  <% include partials/scripts.ejs %>
+
+</body>
+</html>
