@@ -42,6 +42,10 @@
             <% } %>    
             <%= var radiobtn = document.getElementById("theid"); radiobtn.checked = checked; %> 
             </div>
+            <div class="form-group">
+              <label for="year">Quantity</label>
+              <input type="number" class="form-control" id="quantity" name="quantity" value="book.quant">
+            </div>
 			<div class="poster-wrapper">
 	  			<img src="<%= book.image %>" class="img-responsive">
 	  		</div>

@@ -27,6 +27,22 @@ exports.home = function(req, res) {
 	console.log("Finished")
 	});
 };
+// User Home Route
+exports.user = function(req, res) {
+
+	var books = firebase.database().ref('books');
+	var users = firebase.database().ref('Users');
+	var ref = firebase.database().ref();
+
+	books.on("value", function(snapshot) {
+		var bookList  = snapshot.val();
+	return res.render('user', {
+		title: "Library Valley",
+		books : bookList
+	});
+	console.log("Finished")
+	});
+};
 // Categories Route
 exports.viewcategories = function(req, res) {
 	var ref = firebase.database().ref();
@@ -86,11 +102,11 @@ var tables = firebase.database().ref();
 
 	tables.on("value", function(snapshot) {
 		var tableList  = snapshot.val();
-	// return res.render('addbooks', {
-	// 	title: "Add a Book",
-	// 	books : tableList.books,
-	// 	categories : tableList.categories
-	// });
+		return res.render('addbooks', {
+			title: "Add a Book",
+			books : tableList.books,
+			categories : tableList.categories
+		});
 	console.log("Finished")
 	});
 
@@ -110,12 +126,13 @@ exports.createbook = function(req, res) {
             author: req.body.bookAuthor,
             year: req.body.year,
             category: req.body.category,
-            image: image
+            image: image,
+            quantity: req.body.quantity
           });
 		return res.redirect('/');
 		//return res.writeHead(302, { 'Location' : 'http://localhost:4400'} );
 	} else {
-	  alert('Please fill atlease name and author!');
+	  //alert('Please fill atlease name and author!');
 	}
 };
 //user sign up page route
@@ -123,6 +140,16 @@ exports.signup = function(req, res) {
 	console.log(req.body);
 	return res.render('signup', {
 		title: "Sign Up",
+		error: "",
+	});
+	console.log("Finished")
+
+};
+//user login page page route
+exports.login = function(req, res) {
+	console.log(req.body);
+	return res.render('login', {
+		title: "Log in",
 		error: "",
 	});
 	console.log("Finished")
@@ -192,6 +219,25 @@ exports.singlebook = function(req, res) {
 	});
 
 };
+// Display a book route
+exports.usersinglebook = function(req, res) {
+	var books = firebase.database().ref('books');
+
+	books.on("value", function(snapshot) {
+		var bookList  = snapshot.val();
+		var book = bookList[req.params.bookname];
+		var bookKey = req.params.bookname;
+		console.log(book);
+	return res.render('usersinglebook', {
+		title: book.bookName,
+		books : bookList,
+		book : book,
+		bookKey : bookKey
+	});
+	console.log("Finished")
+	});
+
+};
 //borrow a book route
 exports.borrowbook = function(req, res) {
 	var book = firebase.database().ref('books').child(req.params.bookname);
@@ -218,7 +264,8 @@ exports.borrowbook = function(req, res) {
 	            borrowedDate: now,
 	            returnDate: rnow,
 	            referenceCode: referenceCode,
-	            userID: "kojo"
+	            userID: "kojo",
+	            status: "pending"
 	          });
 	books.on("value", function(snapshot) {
 		var bookList  = snapshot.val();
@@ -312,6 +359,7 @@ exports.returnbook = function(req, res) {
 		var allTables  = snapshot.val();
 		var borrowedbook = allTables.borrowed[req.params.borrowedbookkey];
 		var returnDate = borrowedbook.returnDate;
+		var user = users[borrowed.userID];
 		var date1 = new Date();
 		var date2 = new Date(returnDate);
 		var diff = date2.valueOf() - date1.valueOf();
@@ -319,7 +367,7 @@ exports.returnbook = function(req, res) {
 			return res.render('surcharge', {
 				title: "Surcharge User",
 				books : allTables.books,
-				borrowedbooks : allTables.borrowed
+				user : user
 			}); 
 		} else { 
 			return res.render('borrowedbooks', {
