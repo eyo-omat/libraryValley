@@ -13,11 +13,16 @@ var path = require('path');
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', routes.home);
+app.get('/user', routes.user);
 app.get('/addbooks', routes.addbooks);
 app.post('/createbook', routes.createbook);
 app.get('/signup', routes.signup);
+app.get('/login', routes.login);
+app.post('/logins', routes.logins);
+app.post('/logout', routes.logins);
 app.post('/register', routes.register);
 app.get('/booksummary/:bookname?', routes.singlebook);
+app.get('/ubooksummary/:bookname?/:user', routes.usersinglebook);
 app.get('/borrowbook/:borrowedValue/:bookname', routes.borrowbook);
 app.post('/deletebook/:bookname', routes.deletebook);
 app.get('/managebook/:bookname', routes.managebook);
