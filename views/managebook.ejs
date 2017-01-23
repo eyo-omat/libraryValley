@@ -32,19 +32,19 @@
             </div>
             <div class="form-group">
               <label for="year">Year of Publication</label>
-              <input type="month" class="form-control" id="year" name="year" value="<%= book.year %>">
+              <input type="month" class="form-control" id="year" name="year" value="2000-11">
             </div>
             <div class="form-group">
               <label for="category">Category</label>
-            <% for (var key in categories) { %>
-              <input type="text" class="form-control" id="category" name="category" value="<%= book.category %>">    
-            <%var checked= false; if(book.category === categories[key].categoryName) { checked = true; } %>  
-            <% } %>    
-            <%= var radiobtn = document.getElementById("theid"); radiobtn.checked = checked; %> 
+             <% var checked = false; for (var key in categories) { %> 
+              <input type="radio" class="form-control" id="<%= key  %>" name="category" value="<%= key  %>"><%= categories[key].categoryName %>  
+             <% if(book.category === key ) { checked = true; } %> 
+             <% } %>    
+             <script type="text/javascript"> var radiobtn = document.getElementById("<%= book.category %>"); radiobtn.checked = <%= checked %>; </script>
             </div>
             <div class="form-group">
               <label for="year">Quantity</label>
-              <input type="number" class="form-control" id="quantity" name="quantity" value="book.quant">
+              <input type="number" class="form-control" id="quantity" name="quantity" value="<%= book.quantity %>">
             </div>
 			<div class="poster-wrapper">
 	  			<img src="<%= book.image %>" class="img-responsive">

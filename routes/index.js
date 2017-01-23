@@ -292,7 +292,7 @@ exports.register = function(req, res) {
 			            userRole: "user"
 			          });
 				console.log("after push")
-						return res.redirect('/');
+						return res.redirect('/user');
 						console.log("Finished")
 
 				}).catch(function(error) {
@@ -368,7 +368,7 @@ if (user.email === "admin@liibraryvalley.heroku.com") { res.redirect('/'); }
 	var book = firebase.database().ref('books').child(req.params.bookname);
 	var books = firebase.database().ref('books');
 	var borrow = firebase.database().ref('borrowed');
-	book.update({"quantity": book.quantity - 1 });
+	//book.update({"quantity": book.quantity - 1 });
 	var bookKey = req.params.bookname;
 	var referenceCode = Math.random().toString(36).substr(2, 8); //randomString(8);
 	var now = new Date();
@@ -404,18 +404,20 @@ console.log(user);
 if (user.email != "admin@liibraryvalley.heroku.com") { res.redirect('/'); }
 
 });
-	var book = firebase.database().ref('books').child(req.params.bookname);
-	var books = firebase.database().ref('books');
-	books.on("value", function(snapshot) {
-		var bookList  = snapshot.val(); 
-		console.log(book1);
-		var book1 = bookList[req.params.bookname];
+	
+	var tables = firebase.database().ref();
+	tables.on("value", function(snapshot) {
+		var tableList  = snapshot.val();
+		var bookList  = tableList.books;
+		var book1 = tableList.books[req.params.bookname];
 		var bookKey = req.params.bookname;
+		var categories = tableList.categories;
 		return res.render('managebook', {
 		 	title: book1.bookName,
 		 	book : book1,
 		 	books : bookList,
-		 	bookKey : bookKey
+		 	bookKey : bookKey,
+		 	categories : categories
 		 });
 	 console.log("Finished")
 	 });
