@@ -13,7 +13,11 @@ var firebase = require('firebase');
 
 // Home Route
 exports.home = function(req, res) {
+firebase.auth().onAuthStateChanged(function(user) {
+console.log(user);
+if (user.email != "admin@liibraryvalley.heroku.com") { res.redirect('/'); }
 
+});
 	var books = firebase.database().ref('books');
 	var users = firebase.database().ref('Users');
 	var ref = firebase.database().ref();
@@ -29,7 +33,11 @@ exports.home = function(req, res) {
 };
 // User Home Route
 exports.user = function(req, res) {
+firebase.auth().onAuthStateChanged(function(user) {
+console.log(user);
+if (user.email === "admin@liibraryvalley.heroku.com") { res.redirect('/'); }
 
+});
 	var books = firebase.database().ref('books');
 	var users = firebase.database().ref('Users');
 	var ref = firebase.database().ref();
@@ -45,6 +53,11 @@ exports.user = function(req, res) {
 };
 // Categories Route
 exports.viewcategories = function(req, res) {
+firebase.auth().onAuthStateChanged(function(user) {
+console.log(user);
+if (user.email != "admin@liibraryvalley.heroku.com") { res.redirect('/'); }
+
+});
 	var ref = firebase.database().ref();
 
 	ref.on("value", function(snapshot) {
@@ -57,8 +70,32 @@ exports.viewcategories = function(req, res) {
 	console.log("Finished")
 	});
 };
+// Categories Route
+exports.uviewcategories = function(req, res) {
+firebase.auth().onAuthStateChanged(function(user) {
+console.log(user);
+if (user.email === "admin@liibraryvalley.heroku.com") { res.redirect('/'); }
+
+});
+	var ref = firebase.database().ref();
+
+	ref.on("value", function(snapshot) {
+		var refs  = snapshot.val();
+	return res.render('uviewcategories', {
+		title: "Categories",
+		categories : refs.categories,
+		books : refs.books
+	});
+	console.log("Finished")
+	});
+};
 // Category Route
 exports.viewcategory = function(req, res) {
+firebase.auth().onAuthStateChanged(function(user) {
+console.log(user);
+if (user.email != "admin@liibraryvalley.heroku.com") { res.redirect('/'); }
+
+});
 	var ref = firebase.database().ref();
 
 	ref.on("value", function(snapshot) {
@@ -81,8 +118,42 @@ exports.viewcategory = function(req, res) {
 	console.log("Finished")
 	});
 };
+// Category Route
+exports.uviewcategory = function(req, res) {
+firebase.auth().onAuthStateChanged(function(user) {
+console.log(user);
+if (user.email === "admin@liibraryvalley.heroku.com") { res.redirect('/'); }
+
+});
+	var ref = firebase.database().ref();
+
+	ref.on("value", function(snapshot) {
+		var allTables  = snapshot.val();
+		var categoryKey  = req.params.categoryName;
+		var category  = allTables.categories[req.params.categoryName];
+		var books  = allTables.books;
+		var booksz  = [];
+		for (key in books){ 
+			if (books[key].category === req.params.categoryName) {
+					 booksz.push(books[key]); 
+			} 
+		}
+	return res.render('uviewcategory', {
+		title: category.categoryName,
+		category : category,
+		categoryKey : categoryKey,
+		books : booksz
+	});
+	console.log("Finished")
+	});
+};
 //Admin add book action route
 exports.createCategory = function(req, res) {
+firebase.auth().onAuthStateChanged(function(user) {
+console.log(user);
+if (user.email != "admin@liibraryvalley.heroku.com") { res.redirect('/'); }
+
+});
 	var categories = firebase.database().ref('categories');
 	console.log(req.body);
 	if( req.body.categoryName != ''){
@@ -98,6 +169,11 @@ exports.createCategory = function(req, res) {
 };
 // admin add book page route
 exports.addbooks = function(req, res) {
+firebase.auth().onAuthStateChanged(function(user) {
+console.log(user);
+if (user.email != "admin@liibraryvalley.heroku.com") { res.redirect('/'); }
+
+});
 var tables = firebase.database().ref();
 
 	tables.on("value", function(snapshot) {
@@ -113,6 +189,11 @@ var tables = firebase.database().ref();
 };
 //Admin add book action route
 exports.createbook = function(req, res) {
+firebase.auth().onAuthStateChanged(function(user) {
+console.log(user);
+if (user.email != "admin@liibraryvalley.heroku.com") { res.redirect('/'); }
+
+});
 	var books = firebase.database().ref('books');
 	console.log(req.body);
 	var image = "https://firebasestorage.googleapis.com/v0/b/libraryvalley-358ff.appspot.com/o/bookcovers%2F2016-01-27-PHOTO-00008304.jpg?alt=media&token=16c74a5a-cff4-42f2-8d02-b1cc985db42e";
@@ -129,7 +210,7 @@ exports.createbook = function(req, res) {
             image: image,
             quantity: req.body.quantity
           });
-		return res.redirect('/');
+		return res.redirect('/admin');
 		//return res.writeHead(302, { 'Location' : 'http://localhost:4400'} );
 	} else {
 	  //alert('Please fill atlease name and author!');
@@ -155,7 +236,7 @@ exports.login = function(req, res) {
 	console.log("Finished")
 
 };
-//user login page page route
+//user login action page route
 exports.logout = function(req, res) {
 	console.log(req.body);
 firebase.auth().signOut().then(function() {
@@ -175,9 +256,9 @@ firebase.auth().signOut().then(function() {
 exports.logins = function(req, res) {
 	console.log(req.body);
 if( req.body.email != '' || req.body.conPassword != '' ){
-firebase.auth().signInWithEmailAndPassword(req.body.email, req.body.password).then(function (){ 
-	if (req.body.email === "admin@liibraryvalley.heroku.com") { 
-		return res.redirect('/')
+firebase.auth().signInWithEmailAndPassword(req.body.email, req.body.password).then(function (user){ 
+	if (user.email === "admin@liibraryvalley.heroku.com") { 
+		return res.redirect('/admin')
 	} else {
 		return res.redirect('/user')
 	}
@@ -191,7 +272,7 @@ firebase.auth().signInWithEmailAndPassword(req.body.email, req.body.password).th
 	});
 } });
 	} else {
-				res.redirect('/signup');
+				res.redirect('/');
 	}
 	console.log("Finished")
 
@@ -211,7 +292,7 @@ exports.register = function(req, res) {
 			            userRole: "user"
 			          });
 				console.log("after push")
-						return res.redirect('/login');
+						return res.redirect('/user');
 						console.log("Finished")
 
 				}).catch(function(error) {
@@ -231,6 +312,11 @@ exports.register = function(req, res) {
 };
 // Display a book route
 exports.singlebook = function(req, res) {
+firebase.auth().onAuthStateChanged(function(user) {
+console.log(user);
+if (user.email != "admin@liibraryvalley.heroku.com") { res.redirect('/'); }
+
+});
 	var books = firebase.database().ref('books');
 
 	books.on("value", function(snapshot) {
@@ -250,6 +336,11 @@ exports.singlebook = function(req, res) {
 };
 // Display a book route
 exports.usersinglebook = function(req, res) {
+firebase.auth().onAuthStateChanged(function(user) {
+console.log(user);
+if (user.email === "admin@liibraryvalley.heroku.com") { res.redirect('/'); }
+
+});
 	var books = firebase.database().ref('books');
 
 	books.on("value", function(snapshot) {
@@ -269,10 +360,15 @@ exports.usersinglebook = function(req, res) {
 };
 //borrow a book route
 exports.borrowbook = function(req, res) {
+firebase.auth().onAuthStateChanged(function(user) {
+console.log(user);
+if (user.email === "admin@liibraryvalley.heroku.com") { res.redirect('/'); }
+
+});
 	var book = firebase.database().ref('books').child(req.params.bookname);
 	var books = firebase.database().ref('books');
 	var borrow = firebase.database().ref('borrowed');
-	book.update({"quantity": book.quantity - 1 });
+	//book.update({"quantity": book.quantity - 1 });
 	var bookKey = req.params.bookname;
 	var referenceCode = Math.random().toString(36).substr(2, 8); //randomString(8);
 	var now = new Date();
@@ -296,27 +392,32 @@ exports.borrowbook = function(req, res) {
 	            userID: "kojo",
 	            status: "pending"
 	          });
-	books.on("value", function(snapshot) {
-		var bookList  = snapshot.val();
-	return res.redirect('/');
+	//req.flash('user', 'Your Reference Code is::'+referenceCode);
+	return res.redirect('/user');
 	console.log("Finished")
-	});
 
 };
 //manage a book route
 exports.managebook = function(req, res) {
-	var book = firebase.database().ref('books').child(req.params.bookname);
-	var books = firebase.database().ref('books');
-	books.on("value", function(snapshot) {
-		var bookList  = snapshot.val(); 
-		console.log(book1);
-		var book1 = bookList[req.params.bookname];
+firebase.auth().onAuthStateChanged(function(user) {
+console.log(user);
+if (user.email != "admin@liibraryvalley.heroku.com") { res.redirect('/'); }
+
+});
+	
+	var tables = firebase.database().ref();
+	tables.on("value", function(snapshot) {
+		var tableList  = snapshot.val();
+		var bookList  = tableList.books;
+		var book1 = tableList.books[req.params.bookname];
 		var bookKey = req.params.bookname;
+		var categories = tableList.categories;
 		return res.render('managebook', {
 		 	title: book1.bookName,
 		 	book : book1,
 		 	books : bookList,
-		 	bookKey : bookKey
+		 	bookKey : bookKey,
+		 	categories : categories
 		 });
 	 console.log("Finished")
 	 });
@@ -324,6 +425,11 @@ exports.managebook = function(req, res) {
 };
 //update a book route
 exports.updatebook = function(req, res) {
+firebase.auth().onAuthStateChanged(function(user) {
+console.log(user);
+if (user.email != "admin@liibraryvalley.heroku.com") { res.redirect('/'); }
+
+});
 	var book = firebase.database().ref('books').child(req.params.bookname);
 	var books = firebase.database().ref('books');
 	console.log(req.params);
@@ -339,13 +445,18 @@ exports.updatebook = function(req, res) {
 		console.log(book1);
 		var book1 = bookList[req.params.bookname];
 		var bookKey = req.params.bookname;
-		return res.redirect('/');
+		return res.redirect('/admin');
 	 console.log("Finished")
 	 });
 
 };
 // Delete a book route
 exports.deletebook = function(req, res) {
+firebase.auth().onAuthStateChanged(function(user) {
+console.log(user);
+if (user.email != "admin@liibraryvalley.heroku.com") { res.redirect('/'); }
+
+});
 	var book = firebase.database().ref('books').child(req.params.bookname);
 	var books = firebase.database().ref('books');
 	book.once("value", function(snapshot) {
@@ -361,54 +472,66 @@ exports.deletebook = function(req, res) {
 	 });
 	books.on("value", function(snapshot) {
 		var bookList  = snapshot.val();
-	return res.redirect('/');
+	return res.redirect('/admin');
 	console.log("Finished")
 	});
 
 };
 // List all borrowed books route
 exports.borrowedbooks = function(req, res) {
+firebase.auth().onAuthStateChanged(function(user) {
+console.log(user);
+if (user.email != "admin@liibraryvalley.heroku.com") { res.redirect('/'); }
+
+});
 	var tables = firebase.database().ref();
 	tables.on("value", function(snapshot) {
 		var allTables  = snapshot.val();
-	return res.render('borrowedbooks', {
-		title: "Borrowed Books",
-		books : allTables.books,
-		borrowedbooks : allTables.borrowed
-	});
+		console.log(allTables.borrowed)
+		return res.render('borrowedbooks', {
+			title: "Borrowed Books",
+			books : allTables.books,
+			borrowedbooks : allTables.borrowed
+		});
 	 console.log("Finished")
 	 });
 
 };
 // return a book route
 exports.returnbook = function(req, res) {
-	var tables = firebase.database().ref();
-	var borrowed = firebase.database().ref('borrowed');
-	tables.on("value", function(snapshot) {
-		var allTables  = snapshot.val();
-		var borrowedbook = allTables.borrowed[req.params.borrowedbookkey];
-		var returnDate = borrowedbook.returnDate;
-		var user = users[borrowed.userID];
-		var date1 = new Date();
-		var date2 = new Date(returnDate);
-		var diff = date2.valueOf() - date1.valueOf();
-		if (diff < 0) { 
-			return res.render('surcharge', {
-				title: "Surcharge User",
-				books : allTables.books,
-				user : user
-			}); 
-		} else { 
-			borrowed.update({status : "Returned"});
-			return res.render('borrowedbooks', {
-				title: "Borrowed Books",
-				books : allTables.books,
-				borrowedbooks : allTables.borrowed
-			});
-	 }
-	 console.log("Finished")
-	 });
+firebase.auth().onAuthStateChanged(function(user) {
+console.log(user);
+if (user.email != "admin@liibraryvalley.heroku.com") { res.redirect('/'); }
 
+});
+	var tables = firebase.database().ref();
+	var borrowed = firebase.database().ref('borrowed').child(req.params.borrowbookkey);
+	tables.on("value", function(snapshot) {
+		var allTables  = snapshot.val();		
+		// var bk = allTables.ref().child(req.params.borrowbookkey);  //= snapshot.val();		
+		// console.log(bk)		
+			borrowed.on("value", function(snapshot) {
+				var borrowedbook = snapshot.val();
+				console.log("borrroooo", borrowedbook);
+				var returnDate = borrowedbook.returnDate;
+				var date1 = new Date();
+				var from = returnDate.split("/");
+				var date2 = new Date(from[2], from[1] - 1, from[0]);
+				var diff = date2.valueOf() - date1.valueOf();
+					if (diff < 0) { 
+						return res.render('surcharge', {
+							title: "Surcharge User",
+							books : allTables.books,
+							user : user
+						}); 
+					} else { 
+						borrowed.update({status : "Returned"});
+						return res.redirect('/borrowedbooks');
+				 	}
+		 console.log("Finished")
+		 	});
+		 	return
+	});
 };
 // Route for all other page requests
 exports.notFound = function(req, res) {
