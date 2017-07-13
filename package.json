@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/eyo-omat/libraryvalley#readme",
   "engines": {
-    "node": "6.9.3"
+    "node": "6.11.1"
   },
   "dependencies": {
     "body-parser": "^1.15.2",
