@@ -41,3 +41,6 @@ jspm_packages
 
 # ignore .env
 /*.env
+
+# idea files
+.idea/*
